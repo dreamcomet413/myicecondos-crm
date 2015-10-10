@@ -1,0 +1,30 @@
+<div id="versions">
+  <br>
+  <div class="subtitle"><a href="/home/toggle?id=lead_activities" data-remote="true" onclick="crm.flip_subtitle(this)"><small>►</small> Activities</a></div>
+  <div>
+    <div style="display: none;">
+      <div class="list">
+        <% if activities.count > 0 %>
+          <div style="width:100%;float:left;">
+            <table style="width:100%; text-align:left;">
+              <tr>
+                <th width="35%">Activity</th>
+                <th width="40%">Title</th>
+                <th width="25%" style="text-align:center;">Time spent (seconds)</th>
+              </tr>
+              <% activities.select{|a| a[3] == "Viewed listing"}.each do |activity| %>
+                <tr>
+                  <td width="35%" style="border-top:1px solid black;"><%= activity[3] %></td>
+                  <td width="40%" style="border-top:1px solid black;"><%= activity_parse(activity[4], "title") %></td>
+                  <td width="25%" style="text-align:center;border-top:1px solid black;"><%= activity_parse(activity[4], "time_spent") %></td>
+                </tr>
+              <% end %>
+            </table>
+          </div>
+        <% else %>
+          Currently there are no activities
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

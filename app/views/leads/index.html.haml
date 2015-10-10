@@ -1,0 +1,18 @@
+= styles_for :lead
+
+= render 'entities/title_bar'
+
+.remote#create_lead{ hidden }
+
+= render 'search'
+
+.remote#options{ hidden }
+
+.list#leads
+  - if @leads.any?
+    = render @leads
+  - else
+    = render "shared/empty"
+
+#paginate= render "shared/paginate_with_per_page"
+#export= render "shared/export"

@@ -1,0 +1,26 @@
+= simple_form_for @rule do |f|
+  = f.error_messages
+  %br
+  = f.input :title, wrapper_html: { class: 'form_group' }
+  = f.input :source, as: :select, collection: source_select, wrapper_html: { class: 'form_group' }
+  %p
+    %strong
+      Pick users and lead percentages accordingly:
+    .rules
+      - if @rule.information[:users].present?
+        - @rule.information[:users].each do |u|
+          .lead_rotation_row
+            User:
+            = select_tag "sales_reps[][id]", options_from_collection_for_select(User.all, :id, :full_name, u[0])
+            &nbsp;&nbsp;Lead percentage:
+            = text_field_tag "sales_reps[][percentage]", u[1][:percentage], class: "small-input"
+      - else
+        .lead_rotation_row
+          User:
+          = select_tag "sales_reps[][id]", options_from_collection_for_select(User.all, :id, :full_name)
+          &nbsp;&nbsp;Lead percentage:
+          = text_field_tag "sales_reps[][percentage]", "", class: "small-input"
+    %br
+    = link_to "Add Another User", "#", id: "add_user_lead_rule"
+  %hr
+  = f.submit "Save"

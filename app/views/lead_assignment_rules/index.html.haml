@@ -1,0 +1,25 @@
+%h1 Website Lead Rotation
+%hr
+%div{style:"width:100%;"}
+  - if @rules.present?
+    %table.custom_table
+      %thead
+        %tr
+          %th{width:"40%"} Title
+          %th{width:"40%"} Source
+          %th{width:"20%"} Actions
+      %tbody
+        - @rules.each do |rule|
+          %tr
+            %td
+              = rule.title
+            %td
+              = rule.source
+            %td
+              = link_to "Edit", edit_lead_assignment_rule_path(rule)
+              |
+              = link_to "Delete", rule, method: :delete, confirm: "Are you sure?"
+  - else
+    Currently there are no lead rotation rules.
+  %hr
+  = link_to "Add Lead Rotation Rule", new_lead_assignment_rule_path

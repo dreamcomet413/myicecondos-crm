@@ -1,0 +1,245 @@
+# Copyright (c) 2008-2013 Michael Dvorkin and contributors.
+#
+# Fat Free CRM is freely distributable under the terms of MIT license.
+# See MIT-LICENSE file or http://www.opensource.org/licenses/mit-license.php
+#------------------------------------------------------------------------------
+# == Schema Information
+#
+# Table name: leads
+#
+#  id              :integer         not null, primary key
+#  user_id         :integer
+#  campaign_id     :integer
+#  assigned_to     :integer
+#  first_name      :string(64)      default(""), not null
+#  last_name       :string(64)      default(""), not null
+#  access          :string(8)       default("Public")
+#  title           :string(64)
+#  company         :string(64)
+#  source          :string(32)
+#  status          :string(32)
+#  referred_by     :string(64)
+#  email           :string(64)
+#  alt_email       :string(64)
+#  phone           :string(32)
+#  mobile          :string(32)
+#  blog            :string(128)
+#  linkedin        :string(128)
+#  facebook        :string(128)
+#  twitter         :string(128)
+#  rating          :integer         default(0), not null
+#  do_not_call     :boolean         default(FALSE), not null
+#  deleted_at      :datetime
+#  created_at      :datetime
+#  updated_at      :datetime
+#  background_info :string(255)
+#  skype           :string(128)
+#
+
+class Lead < ActiveRecord::Base
+  belongs_to  :user
+  belongs_to  :campaign
+  belongs_to  :assignee, :class_name => "User", :foreign_key => :assigned_to
+  has_one     :contact, :dependent => :nullify # On destroy keep the contact, but nullify its lead_id
+  has_many    :tasks, :as => :asset, :dependent => :destroy
+  has_one     :business_address, :dependent => :destroy, :as => :addressable, :class_name => "Address", :conditions => "address_type='Business'"
+  has_many    :addresses, :dependent => :destroy, :as => :addressable, :class_name => "Address" # advanced search uses this
+  has_many    :emails, :as => :mediator
+  has_many    :calls
+
+  serialize :subscribed_users, Set
+
+  accepts_nested_attributes_for :business_address, :allow_destroy => true
+
+  default_scope { where("first_name IS NOT NULL AND last_name IS NOT NULL") }
+
+  scope :partial_leads, -> { unscoped.where("(first_name IS NULL OR first_name = '') AND (last_name IS NULL OR last_name = '') AND (email IS NULL OR email = '')") }
+
+  scope :state, ->(filters) {
+    where([ 'status IN (?)' + (filters.delete('other') ? ' OR status IS NULL' : ''), filters ])
+  }
+  scope :converted,    ->       { where( status: 'converted' ) }
+  scope :for_campaign, ->(id)   { where( campaign_id: id ) }
+  scope :created_by,   ->(user) { where( user_id: user.id ) }
+  scope :assigned_to,  ->(user) { where( assigned_to: user.id ) }
+
+  scope :text_search, ->(query) { search('first_name_or_last_name_or_company_or_email_cont' => query).result }
+
+  uses_user_permissions
+  acts_as_commentable
+  uses_comment_extensions
+  acts_as_taggable_on :tags
+  has_paper_trail :ignore => [ :subscribed_users ]
+  has_fields
+  exportable
+  sortable :by => [ "first_name ASC", "last_name ASC", "company ASC", "rating DESC", "created_at DESC", "updated_at DESC" ], :default => "created_at DESC"
+
+  has_ransackable_associations %w(contact campaign tasks tags activities emails addresses comments)
+  ransack_can_autocomplete
+  #
+  # validates_presence_of :first_name, :message => :missing_first_name, :if => -> { Setting.require_first_names }
+  # validates_presence_of :last_name,  :message => :missing_last_name,  :if => -> { Setting.require_last_names  }
+  validate :users_for_shared_access
+
+  after_create  :increment_leads_count
+  after_create  :assign_lead
+  after_create  :attach_campaign
+  after_destroy :decrement_leads_count
+
+  before_save   :process_campaign
+  after_save :sync_with_contact
+
+  @@alli_connection = Faraday.new do |faraday|
+    faraday.adapter Faraday.default_adapter
+    faraday.request :url_encoded
+  end
+
+  # Default values provided through class methods.
+  #----------------------------------------------------------------------------
+  def self.per_page ; 20 ; end
+  def self.first_name_position ; "before" ; end
+
+  # Save the lead along with its permissions.
+  #----------------------------------------------------------------------------
+  def save_with_permissions(params)
+    self.campaign = Campaign.find(params[:campaign]) unless params[:campaign].blank?
+    if params[:lead][:access] == "Campaign" && self.campaign # Copy campaign permissions.
+      save_with_model_permissions(Campaign.find(self.campaign_id))
+    else
+      self.attributes = params[:leads]
+      save
+    end
+  end
+
+  # Deprecated: see update_with_lead_counters
+  #----------------------------------------------------------------------------
+  def update_with_permissions(attributes, users = nil)
+    ActiveSupport::Deprecation.warn "lead.update_with_permissions is deprecated and may be removed from future releases, use user_ids and group_ids inside attributes instead and call lead.update_with_lead_counters"
+    update_with_lead_counters(attributes)
+  end
+
+  # Update lead attributes taking care of campaign lead counters when necessary.
+  #----------------------------------------------------------------------------
+  def update_with_lead_counters(attributes)
+    if self.campaign_id == attributes[:campaign_id] # Same campaign (if any).
+      self.attributes = attributes
+      self.save
+    else                                            # Campaign has been changed -- update lead counters...
+      decrement_leads_count                         # ..for the old campaign...
+      self.attributes = attributes                  # Assign new campaign.
+      lead = self.save
+      increment_leads_count                         # ...and now for the new campaign.
+      lead
+    end
+  end
+
+  # Promote the lead by creating contact and optional opportunity. Upon
+  # successful promotion Lead status gets set to :converted.
+  #----------------------------------------------------------------------------
+  def promote(params)
+    account     = Account.create_or_select_for(self, params[:account])
+    opportunity = Opportunity.create_for(self, account, params[:opportunity])
+    contact     = Contact.create_for(self, account, opportunity, params)
+
+    pass = params[:custom_password] || "password"
+    @@alli_connection.post do |req|
+      req.url "#{APP_CONFIG[:alli_url]}/users/user_from_crm", new_user: { email: self.email, first_name: self.first_name, last_name: self.last_name, phone_number: self.phone, password: pass, password_confirmation: pass}, token: APP_CONFIG[:crm_call_token]
+    end
+
+    [account, opportunity, contact]
+  end
+
+  #----------------------------------------------------------------------------
+  def convert
+    update_attribute(:status, "converted")
+  end
+
+  #----------------------------------------------------------------------------
+  def reject
+    update_attribute(:status, "rejected")
+  end
+
+  # Attach a task to the lead if it hasn't been attached already.
+  #----------------------------------------------------------------------------
+  def attach!(task)
+    unless self.task_ids.include?(task.id)
+      self.tasks << task
+    end
+  end
+
+  # Discard a task from the lead.
+  #----------------------------------------------------------------------------
+  def discard!(task)
+    task.update_attribute(:asset, nil)
+  end
+
+  #----------------------------------------------------------------------------
+  def full_name(format = nil)
+    if format.nil? || format == "before"
+      "#{self.first_name} #{self.last_name}"
+    else
+      "#{self.last_name}, #{self.first_name}"
+    end
+  end
+  alias :name :full_name
+
+private
+
+  #----------------------------------------------------------------------------
+  def increment_leads_count
+    if self.campaign_id
+      Campaign.increment_counter(:leads_count, self.campaign_id)
+    end
+  end
+
+  #----------------------------------------------------------------------------
+  def decrement_leads_count
+    if self.campaign_id
+      Campaign.decrement_counter(:leads_count, self.campaign_id)
+    end
+  end
+
+  def assign_lead
+    return unless source.present?
+    rule = LeadAssignmentRule.for_source(source)
+    return unless rule.present?
+    aid = rule.next_user_for_assignment
+    update_attributes(assigned_to: aid)
+    rule.update_assignments(aid)
+    User.find(aid).notify_about_lead(self)
+  rescue => e
+    Rails.logger.error e.message
+  end
+
+  # Make sure at least one user has been selected if the lead is being shared.
+  #----------------------------------------------------------------------------
+  def users_for_shared_access
+    errors.add(:access, :share_lead) if self[:access] == "Shared" && !self.permissions.any?
+  end
+
+  def attach_campaign
+    return unless source.present?
+    return unless assigned_to.present?
+    unless campaign_id.present?
+      update_attributes(campaign_id: Campaign.where(user_id: assigned_to).for_source(source).first.try(:id))
+    else
+      campaign.schedule_lead_emails(self)
+    end
+  end
+
+  def process_campaign
+    return if new_record? || !campaign_id_changed?
+    campaign.schedule_lead_emails(self)
+  end
+
+  def sync_with_contact
+    return unless contact
+    contact_attrs = {}
+    %w(first_name last_name title source email alt_email phone mobile blog linkedin facebook twitter skype do_not_call background_info).each do |name|
+      contact_attrs[name] = self.send(name.intern)
+    end
+    contact.update_attributes(contact_attrs)
+  end
+
+  ActiveSupport.run_load_hooks(:fat_free_crm_lead, self)
+end

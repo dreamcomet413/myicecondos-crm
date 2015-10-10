@@ -1,0 +1,108 @@
+// Copyright (c) 2008-2013 Michael Dvorkin and contributors.
+//
+// Fat Free CRM is freely distributable under the terms of MIT license.
+// See MIT-LICENSE file or http://www.opensource.org/licenses/mit-license.php
+//------------------------------------------------------------------------------
+#search {
+
+  margin-top: 15px;
+
+  .tabs {
+    background: none;
+
+    li {
+      a:link, a:visited {
+        background-color: #ddd;
+        color: #222;
+        font-weight: normal;
+        font-size: 11px;
+      }
+      a:hover {
+        background-color: #ccc;
+      }
+      a.active {
+        background-color: #eee;
+        color: black;
+      }
+    }
+  }
+
+  .search_form {
+    border: none;
+    background-color: #eee;
+    padding: 10px;
+  }
+
+  .options {
+    float: right;
+    padding-top: 10px;
+    margin-right: 30px;
+  }
+  .options a {
+    border-bottom: 1px dotted darkCyan;
+    color: darkCyan;
+    text-decoration: none;
+  }
+
+  #query {
+    margin-top: 6px;
+  }
+
+  .combinator {
+    margin-bottom: 7px;
+    margin-top: 3px;
+  }
+
+  #advanced_search {
+    .combinator {
+      margin-top: 15px;
+    }
+
+    .filters {
+      margin-top: 15px;
+    }
+
+    .fields.condition {
+      margin: 10px 0;
+    }
+
+    .fields.sort {
+      float:right;
+    }
+
+    .submit-search {
+      margin-top: 20px;
+    }
+  }
+
+  .pull-right {
+    float: none;
+  }
+
+}
+
+.defaultTextActive { color: #a1a1a1; }
+
+.remove_fields {
+  margin-right: 4px;
+  &:hover { background: none; }
+  img {
+    vertical-align: middle;
+  }
+}
+
+.select2-container, input.ransack_query {
+  vertical-align: middle;
+}
+
+.ui-datepicker-trigger {
+  vertical-align: middle;
+  margin-left: 4px;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+#search_results_count {
+  text-align: left;
+  padding-top: 4px;
+}

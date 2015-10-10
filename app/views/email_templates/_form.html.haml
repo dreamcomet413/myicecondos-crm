@@ -1,0 +1,25 @@
+
+= simple_form_for @template do |f|
+  = f.input :title, wrapper_html: { class: 'form_group' }
+  %hr
+  = f.input :subject, wrapper_html: { class: 'form_group' }
+  %hr
+  = f.input :body, wrapper_html: { class: 'form_group left-60-column' }, input_html: {class: "tinymce", rows: 20}
+  .right-40-column
+    %p
+      %h3 Templating
+      %ul
+        %li {{FirstName}} - Will be replaced with the leads first name.
+        %li {{LastName}} - Will be replaced with the leads last name.
+        %li {{Phone}} - Will be replaced with the leads phone number.
+        %li {{UserFirstName}} - Will be replaced with your first name.
+        %li {{UserLastName}} - Will be replaced with your first name.
+  .clearfix
+  %hr
+  = f.input :header_image, wrapper_html: { class: 'form_group' }, label: "Header image (centered at the top of the email)"
+  - if @template.header_image.present?
+    = image_tag @template.header_image.url, class: "email_header_in_form"
+  %hr
+  = f.submit "Save"
+
+= tinymce

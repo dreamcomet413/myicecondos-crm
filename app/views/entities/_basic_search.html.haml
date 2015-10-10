@@ -1,0 +1,24 @@
+- model = controller.controller_name.classify.constantize
+- sort_by_menu_items = model.sort_by_fields.map { |field| options_menu_item(:sort_by, field) }
+- current_sort_by = t("option_" + model.sort_by_map.invert[@sort_by])
+
+%div{ :style => "margin: 0px 0px 6px 0px" }
+  = text_field_tag('query', @current_query, :size => 32, :placeholder => "Search #{controller_name}")
+  %span.sorting_options
+    = t(:sort_by, :field => link_to(h(current_sort_by), "#", :id => :sort_by)).html_safe
+
+:javascript
+  var searchTimeout;
+
+  $('#query').on('keydown', function(event) {
+    $el = $(event.target)
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(function () { crm.search($el.val(), '#{controller_name}'); }, 500);
+  });
+
+  new crm.Menu({
+    trigger   : "#sort_by",
+    fade      : 500,
+    appear    : 500,
+    menu_items: [ #{sort_by_menu_items.join(",")} ]
+  });

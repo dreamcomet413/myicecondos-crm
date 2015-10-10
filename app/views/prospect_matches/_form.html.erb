@@ -1,0 +1,104 @@
+<script src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;libraries=places,geometry"></script>
+<script src="/geocomplete.min.js"></script>
+<%= form_for @prospect_match, html: { id: "prospect_match_detail_fields" } do |f| %>
+  <input type="hidden" name="lead_id" value="<%= @lead.id %>">
+  <% if @prospect_match.errors.any? %>
+    <ul style="color:red;">
+      <% @prospect_match.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul><br/>
+  <% end %>
+  <div class="form-group">
+    <label>Title:</label><br/>
+    <%= f.text_field :title, class: "form-control", placeholder: "Enter a name for this search" %>
+  </div><br/>
+  <div class="form-group">
+    <label>City:</label><br/>
+    <%= text_field_tag :city, params[:city], class: "form-control prospect-match-autocomplete-field", placeholder: "Enter a city" %>
+  </div><br/>
+  <input name="locality" type="hidden" value="<%= params[:locality] %>">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="checkbox">
+        <label style="font-size:12px;">
+          <input type="checkbox" name="property_types[]" value="Detached" <% if params[:property_types].include?("Detached") %>checked<% end %>>
+          Detached Homes
+        </label>
+      </div>
+      <div class="checkbox">
+        <label style="font-size:12px;">
+          <input type="checkbox" name="property_types[]" value="Semi-Detached" <% if params[:property_types].include?("Semi-Detached") %>checked<% end %>>
+          Semi-detached Homes
+        </label>
+      </div>
+      <div class="checkbox">
+        <label style="font-size:12px;">
+          <input type="checkbox" name="property_types[]" value="Multiplex" <% if params[:property_types].include?("Multiplex") %>checked<% end %>>
+          Multiplexes
+        </label>
+      </div>
+      <div class="checkbox">
+        <label style="font-size:12px;">
+          <input type="checkbox" name="property_types[]" value="Att/Row/Twnhouse" <% if params[:property_types].include?("Att/Row/Twnhouse") %>checked<% end %>>
+          Townhouses
+        </label>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="checkbox">
+        <label style="font-size:12px;">
+          <input type="checkbox" name="property_types[]" value="Cottage" <% if params[:property_types].include?("Cottage") %>checked<% end %>>
+          Cottages
+        </label>
+      </div>
+      <div class="checkbox">
+        <label style="font-size:12px;">
+          <input type="checkbox" name="property_types[]" value="Condo Apt" <% if params[:property_types].include?("Condo Apt") %>checked<% end %>>
+          Condos
+        </label>
+      </div>
+      <div class="checkbox">
+        <label style="font-size:12px;">
+          <input type="checkbox" name="property_types[]" value="Farm" <% if params[:property_types].include?("Farm") %>checked<% end %>>
+          Farms
+        </label>
+      </div>
+    </div>
+  </div><br/>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="form-group">
+        <label>Min. Price:</label>&nbsp;
+        <%= f.select :min_price, options_for_select(price_options, @prospect_match.min_price), {include_blank: "No Min Price"}, {class: "form-control"} %>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="form-group">
+        <label>Max. Price:</label>&nbsp;
+        <%= f.select :max_price, options_for_select(price_options, @prospect_match.max_price), {include_blank: "No Max Price"}, {class: "form-control"} %>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="form-group">
+        <label>Bedrooms:</label>&nbsp;
+        <%= f.select :beds, options_for_select(beds_options, @prospect_match.beds), {},  {class: "form-control", id: "search_beds_select"} %>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="form-group">
+        <label>Bathrooms:</label>&nbsp;
+        <%= f.select :baths, options_for_select(baths_options, @prospect_match.baths), {}, {class: "form-control", id: "search_baths_select"} %>
+      </div>
+    </div>
+  </div><br/>
+  <button type="submit" class="btn btn-primary btn-search">SAVE</button>
+  <div class="clearfix"></div>
+<% end %>
+<script>
+  $(".prospect-match-autocomplete-field").geocomplete({
+    details: "#prospect_match_detail_fields"
+  });
+</script>

@@ -1,0 +1,594 @@
+%hr
+#lead_details
+  .tabs
+    %ul
+      %li
+        = link_to "Analysis", '#', :"data-to-show" => "tab_analysis", class: params[:active_tab].present? ? "" : "active"
+      %li
+        = link_to "Details", '#', :"data-to-show" => "tab_details"
+      %li
+        = link_to "Lead Info", '#', :"data-to-show" => "tab_info"
+      %li
+        = link_to "Calls (#{lead.calls.count})", '#', :"data-to-show" => "tab_calls"
+      %li
+        = link_to "Emails (#{lead.emails.count})", '#', :"data-to-show" => "tab_emails", class: params[:active_tab] == "emails" ? "active" : ""
+      %li
+        = link_to "Searches", '#', :"data-to-show" => "tab_searches"
+      %li
+        = link_to "Favourites", '#', :"data-to-show" => "tab_favourites"
+      %li
+        = link_to "Home Alerts", '#', :"data-to-show" => "tab_alerts"
+      %li
+        = link_to "Location", '#', :"data-to-show" => "tab_location"
+
+  .lead_tab#tab_analysis{ :style => params[:active_tab].present? ? 'display: none;' : '' }
+    %p
+      - listing_data = activities.select{|a| a[3] == "Viewed listing"}.collect{|l| [activity_parse(l[4], "class_name"), activity_parse(l[4], "id")]}
+      - all_listings = Listing.get_listings(listing_data)
+      - listings = all_listings.uniq
+      - if listings.present?
+        .left-column
+          %h3
+            Analysis
+          %table.bordered
+            %tr
+              %td
+                Avg. Price
+              %td.right-text
+                = number_to_currency(listings.sum(&:lp_dol) / listings.count)
+            %tr
+              %td
+                Viewed
+              %td.right-text
+                = listings.count
+          %br
+          %strong
+            Property Types
+          %table.bordered
+            - listings.group_by(&:type_own1_out).each do |k, v|
+              %tr
+                %td
+                  = k
+                %td.right-text
+                  = v.count
+
+          %br
+          %table.bordered
+            - listings.group_by(&:municipality).each do |k, v|
+              %tr
+                %td{colspan:2}
+                  %strong
+                    = k
+              - v.group_by(&:community).each do |c_k, c_v|
+                %tr
+                  %td
+                    = c_k.present? ? c_k : "Other"
+                  %td.right-text
+                    = c_v.count
+
+        .right-column
+          %h3
+            Properties Viewed
+          - all_listings.group_by(&:ml_num).each do |k, v|
+            .listing-box
+              = link_to image_tag("http://nicholasalli.s3.amazonaws.com/listing_photos/#{v.first.try(:class).try(:name).try(:parameterize)}_#{v.first.try(:id)}_0.jpg", onerror: "this.onerror=null;this.src='#{APP_CONFIG[:alli_url]}/missing-image.png';"), "#{APP_CONFIG[:alli_url]}/listings/#{v.first.try(:id)}", target: "_blank"
+              %br
+              %span
+                = v.count
+                views
+        .clearfix
+      - else
+        %p
+          There are no activities to analize
+
+  .lead_tab#tab_details{ :style => 'display: none;' }
+    = link_to_inline(:edit_lead, edit_lead_path(lead), text: "Edit Info", class: "right-align bigger-font")
+    .info-section
+      .info-row
+        .left
+          .info-label
+            First Name:
+          %span
+            = lead.first_name.presence || "---"
+        .right
+          .info-label
+            Last Name:
+          %span
+            = lead.last_name.presence || "---"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Email:
+          %span
+            = lead.email.presence || "---"
+        .right
+          .info-label
+            Phone:
+          %span
+            = lead.phone.presence || "---"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Tags:
+          %span
+            = lead.tags.join(", ").presence || "---"
+        .clearfix
+    .info-section
+      %h3 Status
+      .info-row
+        .left
+          .info-label
+            Assigned to:
+          %span
+            = lead.assignee.try(:full_name).presence || "---"
+        .right
+          .info-label
+            Status:
+          %span
+            = lead.status.presence || "---"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Rating:
+          %span
+            = lead.rating.presence || "---"
+        .right
+          .info-label
+            Source:
+          %span
+            = lead.source.presence || "---"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Campaign:
+          %span
+            = lead.campaign.try(:name).presence || "---"
+        .clearfix
+
+    .info-section
+      %h3 Contact Information
+      .info-row
+        .left
+          .info-label
+            Title:
+          %span
+            = lead.title.presence || "---"
+        .right
+          .info-label
+            Company:
+          %span
+            = lead.company.presence || "---"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Alternative email:
+          %span
+            = lead.alt_email.presence || "---"
+        .right
+          .info-label
+            Mobile:
+          %span
+            = lead.mobile.presence || "---"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Address:
+          %span
+            = lead.business_address.try(:display_string).presence || "---"
+        .right
+          .info-label
+            Referred by:
+          %span
+            = lead.referred_by.presence || "---"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Do not call:
+          %span
+            = lead.do_not_call? ? 'True' : 'False'
+        .clearfix
+    .info-section
+      %h3 Web Presence
+      .info-row
+        .left
+          .info-label
+            Website/Blog:
+          %span
+            = lead.blog.presence || "---"
+        .right
+          .info-label
+            Twitter:
+          %span
+            = lead.twitter.presence || "---"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            LinkedIn:
+          %span
+            = lead.linkedin.presence || "---"
+        .right
+          .info-label
+            Facebook:
+          %span
+            = lead.facebook.presence || "---"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Skype:
+          %span
+            = lead.skype.presence || "---"
+        .clearfix
+
+  .lead_tab#tab_info{ :style => 'display: none;' }
+    .info-section
+      %h3 Buying Info
+      .info-row
+        .left
+          .info-label
+            Owns/Rents:
+          %span
+            = editable lead, :buying_info_owns, title: "Please enter...", emptytext: "Click to edit"
+        .right
+          .info-label
+            Type of Property:
+          %span
+            = editable lead, :buying_info_property_type, title: "Please enter...", emptytext: "Click to edit"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Planning To Buy In:
+          %span
+            = editable lead, :buying_info_planning, title: "Please enter...", emptytext: "Click to edit"
+        .right
+          .info-label
+            Type of Construction:
+          %span
+            = editable lead, :buying_info_construction_type, title: "Please enter...", emptytext: "Click to edit"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Price From $:
+          %span
+            = editable lead, :buying_info_price_from, title: "Please enter...", emptytext: "Click to edit", value: lead.buying_info_price_from.to_s
+        .right
+          .info-label
+            Price To $:
+          %span
+            = editable lead, :buying_info_price_to, title: "Please enter...", emptytext: "Click to edit", value: lead.buying_info_price_to.to_s
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Bedrooms:
+          %span
+            = editable lead, :buying_info_bedrooms, title: "Please enter...", emptytext: "Click to edit"
+        .right
+          .info-label
+            Bathrooms:
+          %span
+            = editable lead, :buying_info_bathrooms, title: "Please enter...", emptytext: "Click to edit"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Areas of Interest:
+          %span
+            = editable lead, :buying_info_interest, title: "Please enter...", emptytext: "Click to edit"
+        .right
+          .info-label
+            City:
+          %span
+            = editable lead, :buying_info_city, title: "Please enter...", emptytext: "Click to edit"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Mortgage:
+          %span
+            = editable lead, :buying_info_mortgage, title: "Please enter...", emptytext: "Click to edit"
+        .right
+          .info-label
+            Garage Type:
+          %span
+            = editable lead, :buying_info_garage, title: "Please enter...", emptytext: "Click to edit"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Requested Info For:
+          %span
+            = editable lead, :requested_info, title: "Please enter...", emptytext: "Click to edit", type: "textarea"
+        .clearfix
+    .info-section
+      %h3 Listing Info
+      .info-row
+        .left
+          .info-label
+            Type of Property:
+          %span
+            = editable lead, :listing_info_property_type, title: "Please enter...", emptytext: "Click to edit"
+        .right
+          .info-label
+            Address:
+          %span
+            = editable lead, :listing_info_address, title: "Please enter...", emptytext: "Click to edit"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Property Condition:
+          %span
+            = editable lead, :listing_info_property_condition, title: "Please enter...", emptytext: "Click to edit"
+        .right
+          .info-label
+            City:
+          %span
+            = editable lead, :listing_info_city, title: "Please enter...", emptytext: "Click to edit"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Type of Parking:
+          %span
+            = editable lead, :listing_info_parking_type, title: "Please enter...", emptytext: "Click to edit"
+        .right
+          .info-label
+            Postal Code:
+          %span
+            = editable lead, :listing_info_postal_code, title: "Please enter...", emptytext: "Click to edit"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Basement:
+          %span
+            = editable lead, :listing_info_basement, title: "Please enter...", emptytext: "Click to edit"
+        .right
+          .info-label
+            Lead Is:
+          %span
+            = editable lead, :listing_info_lead_is, title: "Please enter...", emptytext: "Click to edit"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Listing Status:
+          %span
+            = editable lead, :listing_info_status, title: "Please enter...", emptytext: "Click to edit"
+        .right
+          .info-label
+            Bedrooms:
+          %span
+            = editable lead, :listing_info_bedrooms, title: "Please enter...", emptytext: "Click to edit"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Sell In:
+          %span
+            = editable lead, :listing_info_sell_in, title: "Please enter...", emptytext: "Click to edit"
+        .right
+          .info-label
+            Bathrooms:
+          %span
+            = editable lead, :listing_info_bathrooms, title: "Please enter...", emptytext: "Click to edit"
+        .clearfix
+      .info-row
+        .left
+          .info-label
+            Price Search Radius:
+          %span
+            = editable lead, :price_search_radius, title: "Please enter...", emptytext: "Click to edit", value: lead.price_search_radius.to_s
+        .clearfix
+
+  .lead_tab#tab_calls{ :style => 'display: none;' }
+    = render "lead_calls", lead: lead
+
+  .lead_tab#tab_emails{ :style => params[:active_tab] == "emails" ? "" : "display: none;" }
+    %p
+      - if lead.emails.present?
+        %table.custom_table
+          %thead
+            %tr
+              %th{width:"55%"} Subject
+              %th{width:"25%"} Sent At
+              %th{width:"20%"} Opened?
+          %tbody
+            - lead.emails.each do |e|
+              %tr
+                %td{width:"55%"}
+                  = e.subject
+                %td{width:"25%"}
+                  = e.sent_at.try(:strftime, "%e %b %Y %H:%M:%S")
+                %td{width:"20%"}
+                  - if e.opened?
+                    Yes
+                  - else
+                    No
+      - else
+        No emails have been sent to a lead yet
+    %p
+      = link_to "Send an Email", "#", id: "send_lead_email"
+      #new_lead_email{ :style => 'display: none;' }
+        %hr
+        %h3 New Email
+        %hr
+        = simple_form_for EmailTemplate.new, url: send_email_lead_path do |f|
+          = f.hidden_field :title, value: "Lead Email"
+          = f.input :subject, wrapper_html: { class: 'form_group' }
+          %hr
+          = f.input :body, wrapper_html: { class: 'form_group left-60-column' }, input_html: {class: "tinymce", rows: 20}
+          .right-40-column
+            %p
+              %h3 Templating
+              %ul
+                %li {{FirstName}} - Will be replaced with the leads first name.
+                %li {{LastName}} - Will be replaced with the leads last name.
+                %li {{Phone}} - Will be replaced with the leads phone number.
+                %li {{UserFirstName}} - Will be replaced with your first name.
+                %li {{UserLastName}} - Will be replaced with your first name.
+          .clearfix
+          %hr
+          = f.input :header_image, wrapper_html: { class: 'form_group' }, label: "Header image (centered at the top of the email)"
+          %hr
+          = f.submit "Send an Email"
+
+        = tinymce
+        = link_to "Cancel", "#", id: "cancel_lead_email", class: "force-pull-right"
+
+
+  .lead_tab#tab_searches{ :style => 'display: none;' }
+    %div{style: "width:45%; float:left;margin-left:1%;"}
+      %h3
+        Generic Search
+      %table.bordered
+        %tr
+          %td
+            %strong
+              Term
+          %td.center-text
+            %strong
+              Count
+        - activities.select{|a| a[3] == "Searched"}.group_by{|a| a[4]}.each do |activity|
+          %tr
+            %td
+              = activity_parse(activity[0], "query")
+            %td.center-text
+              = activity[1].count
+
+    %div{style: "width:45%; float:left;margin-left:1%;"}
+      %h3
+        Searched Locations
+      %table.bordered
+        %tr
+          %td
+            %strong
+              Location
+          %td.center-text
+            %strong
+              Count
+        - activities.select{|a| a[3] == "Searched Location"}.group_by{|a| a[4]}.each do |activity|
+          %tr
+            %td
+              = activity_parse(activity[0], "location")
+            %td.center-text
+              = activity[1].count
+
+    %div{style: "width:45%; float:left;margin-left:1%;"}
+      %h3
+        Advanced Search
+      %table.bordered
+        %tr
+          %td
+            %strong
+              Min Price
+          %td
+            %strong
+              Max Price
+          %td
+            %strong
+              Beds
+          %td
+            %strong
+              Baths
+        - activities.select{|a| a[3] == "Advanced Search"}.each do |activity|
+          - min_price = activity_parse(activity[4], "search_attributes").try(:[], "min_price")
+          - max_price = activity_parse(activity[4], "search_attributes").try(:[], "max_price")
+          - beds = activity_parse(activity[4], "search_attributes").try(:[], "search_beds")
+          - baths = activity_parse(activity[4], "search_attributes").try(:[], "search_bath")
+          - if min_price.present? || max_price.present? || beds.present? || baths.present?
+            %tr
+              %td
+                = min_price
+              %td
+                = max_price
+              %td
+                = beds
+              %td
+                = baths
+    .clearfix
+
+  .lead_tab#tab_favourites{ :style => 'display: none;' }
+    %h3
+      Favourites
+    %p
+      - if @favourites.present?
+        - @favourites.each do |favourite|
+          - listing = Listing.where(id: favourite.favouriteable_id).first
+          - if listing
+            .listing-box
+              = link_to image_tag("http://nicholasalli.s3.amazonaws.com/listing_photos/listing_#{listing.id}_0.jpg", onerror: "this.onerror=null;this.src='#{APP_CONFIG[:alli_url]}/missing-image.png';"), "#{APP_CONFIG[:alli_url]}/listings/#{listing.id}", target: "_blank"
+              %br
+              %span
+                = "#{listing.addr}, #{listing.municipality}"
+      - else
+        Lead does not have any favourite listings yet
+      .clearfix
+  .lead_tab#tab_alerts{ :style => 'display: none;' }
+    %h3
+      Home Alerts
+    %p
+      - if @prospect_matches.present?
+        %table.custom_table
+          %thead
+            %tr
+              %th{width:"20%"} Title
+              %th{width:"20%"} City
+              %th{width:"20%"} Property Types
+              %th{width:"20%"} Details
+              %th{width:"20%"} Actions
+          %tbody
+            - @prospect_matches.each do |p|
+              %tr
+                %td{width:"20%"}
+                  = p.title
+                %td{width:"20%"}
+                  = p.city
+                %td{width:"20%"}
+                  = p.property_types.try(:split, ",").try(:join, ", ")
+                %td{width:"20%"}
+                  - if p.min_price.present?
+                    %strong Min. Price:
+                    = number_to_currency(p.min_price)
+                    %br
+                  - if p.max_price.present?
+                    %strong Max. Price:
+                    = number_to_currency(p.max_price)
+                    %br
+                  - if p.beds.present?
+                    %strong Bedrooms:
+                    = p.beds
+                    %br
+                  - if p.baths.present?
+                    %strong Bathrooms:
+                    = p.baths
+                    %br
+                %td{width:"20%"}
+                  = link_to "Edit", edit_prospect_match_path(p, lead_id: lead.id)
+                  &nbsp;&nbsp; | &nbsp;&nbsp;
+                  = link_to "Delete", prospect_match_path(p, lead_id: lead.id), method: :delete, data: {confirm: "Are you sure?"}
+      - else
+        Lead does not have any Home Alerts set up yet
+      .clearfix
+      = link_to "Add New Home Alert", new_prospect_match_path(lead_id: lead.id), class: "force-pull-right"
+  .lead_tab#tab_location{ :style => 'display: none;' }
+    %h3
+      Location (by IP address)
+    %p
+      - if lead.lat.present?
+        = image_tag "https://maps.googleapis.com/maps/api/staticmap?center=#{lead.lat},#{lead.long}&zoom=9&size=800x300&maptype=roadmap&markers=color:red%7C#{lead.lat},#{lead.long}"
+      - else
+        Unfortunately, location cannot be calculated
+      .clearfix
+%hr

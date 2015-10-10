@@ -1,0 +1,30 @@
+<h1>Website Email Templates</h1>
+<hr/>
+<div style="width:100%;">
+  <% if @templates.present? %>
+  <table class="custom_table">
+    <thead>
+      <tr>
+        <th width="40%">Title</th>
+        <th width="40%">Subject</th>
+        <th width="20%">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @templates.each do |template| %>
+        <tr>
+          <td><%= template.title %></td>
+          <td><%= template.subject %></td>
+          <td><%= link_to "Edit", edit_email_template_path(template) %> | <%= link_to "Delete", template, method: :delete, confirm: "Are you sure?" %><br/>
+            <%= link_to "Send me a sample email", sample_email_template_path(template) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <% else %>
+    Currently there are no email templates.
+  <% end %>
+  <hr>
+  <%= link_to "Add an Email Template", new_email_template_path %>
+</div>

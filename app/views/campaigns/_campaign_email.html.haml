@@ -1,0 +1,7 @@
+%tr
+  %td
+    = editable campaign_email, :send_in_minutes, url: campaign_campaign_email_path(campaign, campaign_email), title: "Please enter...", emptytext: "Click to edit", value: campaign_email.send_in_minutes.to_s
+  %td
+    = editable campaign_email, :email_template_id, url: campaign_campaign_email_path(campaign, campaign_email), title: "Please enter...", emptytext: "Click to edit", value: campaign_email.email_template.try(:title), type: :select, source: current_user.email_templates.collect{|t| {value: t.id, text: t.title}}
+  %td
+    = link_to "Delete", campaign_campaign_email_path(campaign, campaign_email), method: :delete, confirm: "Are you sure?"

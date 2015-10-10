@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Nicholas Alli CRM</title>
+  <style type="text/css">
+  body { color:#000000; font-size:14px; font-family:Verdana,Helvetica,Arial; width: 100%; }
+  .content {
+    padding:20px;
+    margin:20px;
+    border: 1px solid #ccc;
+  }
+  .email_header_image { max-width:99%; margin: 5px 0; }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <h3>A new lead has been assigned to you</h3>
+    <p>
+      <strong>Name:</strong>&nbsp;&nbsp;<%= @lead.name %><br/>
+      <%= link_to "Click here to view lead details", lead_url(@lead) %>
+    </p>
+  </div>
+</body>
+</html>

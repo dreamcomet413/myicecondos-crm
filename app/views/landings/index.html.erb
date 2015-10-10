@@ -1,0 +1,28 @@
+<h1>Website Landing Pages</h1>
+<hr/>
+<div style="width:100%;">
+  <% if @landings.present? %>
+  <table class="custom_table">
+    <thead>
+      <tr>
+        <th width="40%">Title</th>
+        <th width="40%">URL</th>
+        <th width="40%">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @landings.each do |landing| %>
+        <tr>
+          <td><%= landing.title %></td>
+          <td>/<%= landing.slug %></td>
+          <td><%= link_to "View", "#{APP_CONFIG[:alli_url]}/landing/#{landing.slug}" %> | <%= link_to "Edit", edit_landing_path(landing) %> | <%= link_to "Delete", landing, method: :delete, confirm: "Are you sure?" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <% else %>
+    Currently there are no langing pages.
+  <% end %>
+  <hr>
+  <%= link_to "Add a Landing Page", new_landing_path %>
+</div>

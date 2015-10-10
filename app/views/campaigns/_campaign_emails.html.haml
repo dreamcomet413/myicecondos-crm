@@ -1,0 +1,30 @@
+%br
+%br
+.subtitle_tools
+  = link_to "Add Email", "#", id: "add_campaign_email"
+.subtitle
+  Campaign Emails
+%p
+  - if object.campaign_emails.present?
+    %table.custom_table
+      %thead
+        %tr
+          %th{width:"25%"} Send in Minutes
+          %th{width:"65%"} Email to Send
+          %th{width:"10%"}
+      %tbody
+        = render partial: "campaigns/campaign_email", collection: object.campaign_emails, locals: {campaign: object}
+  - else
+    You have not set up emails for this campaign
+  #campaign_email_form.comment{style: "padding:10px;"}
+    = simple_form_for CampaignEmail.new, url: campaign_campaign_emails_path(object), remote: true do |f|
+      = f.input :send_in_minutes, wrapper_html: { class: 'left-float' }
+      = f.input :email_template_id, as: :select, label: "Email to Send", collection: current_user.email_templates, wrapper_html: { class: 'left-float' }
+      = f.submit "Add Email"
+      or
+      = link_to "Cancel", "#", id: "cancel_add_campaign_email"
+      .clearfix
+.subtitle
+%br
+%script
+  $('.editable').editable()

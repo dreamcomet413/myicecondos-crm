@@ -1,0 +1,9 @@
+- asset = controller_name.singularize
+%tr
+  %td{ :valign => :top, :colspan => span }
+    .label= t(:tags) + ":"
+
+    = f.hidden_field :tag_list,
+    {:class => "select2_tag", :data => {:tags => Tag.all.map{|t| t.name},
+    :url => url_for(action: 'field_group'), :placeholder => t(:select_or_create_tags),
+    :multiple => true, :asset_id => f.object.try(:id) }}

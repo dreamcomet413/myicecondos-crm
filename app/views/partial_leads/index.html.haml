@@ -1,0 +1,28 @@
+%h1 Website Partial Leads
+%hr
+%p
+  Partial leads hold those leads that did not fill out all the information.
+  %br
+  Only partial information was captured such as Home Address using the landing pages
+%div{style: "width:100%;"}
+  - if @partial_leads.present?
+    %table.bordered.custom_table
+      %thead
+        %tr
+          %th.left-text{width: "40%"} Full Address
+          %th.left-text{width: "40%"}
+            = sort_link(@q, :source)
+          %th.left-text{width: "20%"}
+            = sort_link(@q, :created_at, "Date")
+      %tbody
+        - @partial_leads.each do |partial|
+          %tr
+            %td
+              = partial.business_address.try(:display_string)
+            %td
+              = partial.source
+            %td
+              = partial.created_at.strftime("%e %b %Y %H:%M:%S")
+    = will_paginate @partial_leads
+  - else
+    %i Currently there are no partial leads.

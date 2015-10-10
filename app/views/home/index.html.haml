@@ -1,0 +1,32 @@
+
+= styles_for :task, :account
+
+.title
+  %span#registrations_title New Registrants
+%ul.list#registrants
+  - unless @new_users.empty?
+    = render :partial => "contacts/contact", :collection => @new_users
+  - else
+    There were no new registrations in the last 24 hours
+
+.title
+  %span#active_title Active Users
+%ul.list#active
+  - unless @active_users.empty?
+    = render :partial => "contacts/contact", :collection => @active_users
+  - else
+    There are no active users
+
+.title_tools
+  = link_to_inline(:options, url_for(:action => :options), :text => t(:options))
+
+.title
+  %span#title #{t :recent_activity}
+  = image_tag("loading.gif", :size => :thumb, :id => "loading", :style => "display: none;")
+.remote#options{ hidden }
+
+%ul.list#activities
+  - unless @activities.empty?
+    = render :partial => "activity", :collection => @activities
+  - else
+    #{t :no_activity_records}

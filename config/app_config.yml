@@ -1,0 +1,26 @@
+development:
+  alli_db: alli_development
+  alli_db_connection:
+    adapter: mysql2
+    encoding: utf8
+    database: alli_development
+    pool: 5
+    username: root
+    password:
+    socket: /tmp/mysql.sock
+  alli_url: http://alli.dev
+  api_token: ZuB2nB24GTyWsyuPVRwMaZmi
+  crm_call_token: MiB2nB24GTyWsyuPVRwMaZOk
+
+staging:
+  alli_db: alli_staging
+  alli_db_connection:
+    adapter: mysql2
+    encoding: utf8
+    database: alli_staging
+    pool: 5
+    username: rails
+    password: rails
+  alli_url: http://beta.alli.ca
+  api_token: ZuB2nB24GTyWsyuPVRwMaZmi
+  crm_call_token: MiB2nB24GTyWsyuPVRwMaZOk

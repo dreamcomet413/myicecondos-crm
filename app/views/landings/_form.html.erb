@@ -1,0 +1,10 @@
+<%= simple_form_for @landing do |f| %>
+  <%= f.input :landing_type, as: :select, collection: ["Search", "Home Value", "Street Watch"], include_blank: false, wrapper_html: { class: 'form_group' } %>
+  <%= f.input :title, wrapper_html: { class: 'form_group' } %>
+  <%= f.input :slug, label: "Slug (URL)", wrapper_html: { class: 'form_group' } %>
+  <%= f.input :main_heading, wrapper_html: { class: 'form_group' } %>
+  <%= f.input :sub_heading, wrapper_html: { class: 'form_group' } %>
+  <%= f.input :description, wrapper_html: { class: 'form_group' } %>
+  <%= f.input :bg_image %><br>
+  <%= f.submit "Save" %>
+<% end %>

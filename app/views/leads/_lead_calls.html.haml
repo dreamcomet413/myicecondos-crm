@@ -1,0 +1,32 @@
+%h3.left-float Calls
+= link_to "Add a New Call", "#", class: "right-float bigger-font", id: "new_call_link"
+.clearfix
+#new_call_container
+  = simple_form_for Call.new, url: add_call_lead_path(lead), remote: true do |f|
+    %br
+    = f.input :title, collection: Call.title_list, include_blank: false, label: "Type", wrapper_html: { class: 'left-float' }
+    = f.input :notes, wrapper_html: { class: 'left-float' }
+    = f.submit "     Add Call     ", wrapper_html: { class: 'left-float' }
+    or
+    = link_to "Cancel", "#", id: "cancel_new_call"
+    .clearfix
+
+- if lead.calls.present?
+  %br
+  %table.bordered.cell-padding#table-calls
+    %tbody
+      - lead.calls.order("created_at DESC").each do |call|
+        %tr
+          %td{width:"40%"}
+            %strong
+              = call.title
+          %td{width:"40%"}
+            = editable call, :notes, title: "Please enter...", emptytext: "Click to edit", url: update_call_lead_path(lead, call_id: call.id), type: "textarea"
+          %td{width:"20%"}
+            = call.created_at.strftime("%e %b %Y %H:%M:%S")
+- else
+  %p
+    Currently there are no calls
+
+%script
+  $('.editable').editable()
