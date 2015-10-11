@@ -24,3 +24,16 @@ staging:
   alli_url: http://beta.alli.ca
   api_token: ZuB2nB24GTyWsyuPVRwMaZmi
   crm_call_token: MiB2nB24GTyWsyuPVRwMaZOk
+
+production:
+  alli_db: alli_production
+  alli_db_connection:
+    adapter: mysql2
+    encoding: utf8
+    database: alli_production
+    pool: 5
+    username: rails
+    password: rails
+  alli_url: http://nicholasalli.com
+  api_token: ZuB2nB24GTyWsyuPVRwMaZmi
+  crm_call_token: MiB2nB24GTyWsyuPVRwMaZOk
