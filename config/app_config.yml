@@ -33,7 +33,7 @@ production:
     database: alli_production
     pool: 5
     username: rails
-    password: rails
+    password: rails_alli
   alli_url: http://nicholasalli.com
   api_token: ZuB2nB24GTyWsyuPVRwMaZmi
   crm_call_token: MiB2nB24GTyWsyuPVRwMaZOk
