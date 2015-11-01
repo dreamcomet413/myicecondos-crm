@@ -1,35 +1,34 @@
 
 = styles_for :task, :account
-
-.title
-  %span#registrations_title My Leads
-%ul.list#registrants
-  %div{style: "background:#e5e5e5;margin-top:10px;"}
-    .lead-info-box{style: "width:10%;font-weight:bold;"}
-      Last Activity
-      %br
-      Added to System
-    .lead-info-box{style: "width:10%;font-weight:bold;"}
-      Lead Name
-      %br
-      Location
-    .lead-info-box{style: "width:15%;font-weight:bold;"}
-      Phone
-      %br
-      Email
-    .lead-info-box{style: "width:10%;font-weight:bold;"}
-      Status
-      %br
-      Title
-    .lead-info-box{style: "width:20%;font-weight:bold;"}
-      &nbsp;
-      %br
-      Lead Stats
-    .lead-info-box{style: "width:10%;font-weight:bold;"}
-      &nbsp;
-      %br
-      Owner
   - unless @my_leads.empty?
+    .title
+      %span#registrations_title My Leads
+    %ul.list#registrants
+      %div{style: "background:#e5e5e5;margin-top:10px;"}
+        .lead-info-box{style: "width:10%;font-weight:bold;"}
+          Last Activity
+          %br
+          Added to System
+        .lead-info-box{style: "width:10%;font-weight:bold;"}
+          Lead Name
+          %br
+          Location
+        .lead-info-box{style: "width:15%;font-weight:bold;"}
+          Phone
+          %br
+          Email
+        .lead-info-box{style: "width:10%;font-weight:bold;"}
+          Status
+          %br
+          Title
+        .lead-info-box{style: "width:20%;font-weight:bold;"}
+          &nbsp;
+          %br
+          Lead Stats
+        .lead-info-box{style: "width:10%;font-weight:bold;"}
+          &nbsp;
+          %br
+          Owner
     - @my_leads.each do |lead|
       = render :partial => "leads/lead", locals: {lead: lead, custom_template: "leads/index_long"}
   - else
