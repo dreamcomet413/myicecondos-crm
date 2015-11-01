@@ -35,7 +35,7 @@
               %td
                 Avg. Price
               %td.right-text
-                = number_to_currency(listings.sum(&:lp_dol) / listings.count)
+                = number_to_currency(listings.sum{|l| l.lp_dol.to_f} / listings.count)
             %tr
               %td
                 Viewed
@@ -101,7 +101,7 @@
           .info-label
             Email:
           %span
-            = lead.email.presence || "---"
+            = link_to "#{lead.email.presence || "---"}", '#', :"data-to-show" => "tab_emails", class: "email_link"
         .right
           .info-label
             Phone:
@@ -424,23 +424,29 @@
         %hr
         %h3 New Email
         %hr
-        = simple_form_for EmailTemplate.new, url: send_email_lead_path do |f|
-          = f.hidden_field :title, value: "Lead Email"
-          = f.input :subject, wrapper_html: { class: 'form_group' }
-          %hr
-          = f.input :body, wrapper_html: { class: 'form_group left-60-column' }, input_html: {class: "tinymce", rows: 20}
-          .right-40-column
-            %p
-              %h3 Templating
-              %ul
-                %li {{FirstName}} - Will be replaced with the leads first name.
-                %li {{LastName}} - Will be replaced with the leads last name.
-                %li {{Phone}} - Will be replaced with the leads phone number.
-                %li {{UserFirstName}} - Will be replaced with your first name.
-                %li {{UserLastName}} - Will be replaced with your first name.
-          .clearfix
-          %hr
-          = f.input :header_image, wrapper_html: { class: 'form_group' }, label: "Header image (centered at the top of the email)"
+        = simple_form_for EmailTemplate.new, url: send_email_lead_path, html: { novalidate: true } do |f|
+          Pick a saved email:&nbsp;&nbsp;
+          = select_tag :existing_template_id, options_from_collection_for_select(current_user.email_templates, :id, :title), include_blank: true
+          &nbsp;&nbsp;
+          or&nbsp;
+          %a{href:"#", id: "show_custom_email"} Build a custom email
+          %div.custom_email{ :style => 'display: none;' }
+            = f.hidden_field :title, value: "Lead Email"
+            = f.input :subject, wrapper_html: { class: 'form_group' }
+            %hr
+            = f.input :body, wrapper_html: { class: 'form_group left-60-column' }, input_html: {class: "tinymce", rows: 20}
+            .right-40-column
+              %p
+                %h3 Templating
+                %ul
+                  %li {{FirstName}} - Will be replaced with the leads first name.
+                  %li {{LastName}} - Will be replaced with the leads last name.
+                  %li {{Phone}} - Will be replaced with the leads phone number.
+                  %li {{UserFirstName}} - Will be replaced with your first name.
+                  %li {{UserLastName}} - Will be replaced with your first name.
+            .clearfix
+            %hr
+            = f.input :header_image, wrapper_html: { class: 'form_group' }, label: "Header image (centered at the top of the email)"
           %hr
           = f.submit "Send an Email"
 

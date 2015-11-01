@@ -24,7 +24,7 @@ class LeadsController < EntitiesController
   def show
     @comment = Comment.new
     @timeline = timeline(@lead)
-    @activities = Activity.get_activities @lead
+    @activities = Activity.get_activities(@lead)
     @alli_user = SiteUser.where(email: @lead.email).first
     @favourites = @alli_user.favourites if @alli_user
     @prospect_matches = @alli_user.prospect_matches if @alli_user
@@ -222,9 +222,18 @@ class LeadsController < EntitiesController
 
   def send_email
     lead = Lead.find params[:id]
-    @template = EmailTemplate.new params[:email_template]
-    UserMailer.manual_email(lead, @template, current_user).deliver
-    redirect_to lead_path(lead, active_tab: "emails"), notice: "Email was sent successfully"
+    if params[:existing_template_id].present?
+      @template = EmailTemplate.find params[:existing_template_id]
+    else
+      @template = EmailTemplate.new params[:email_template]
+    end
+    if @template.valid?
+      UserMailer.manual_email(lead, @template, current_user).deliver
+      redirect_to lead_path(lead, active_tab: "emails"), notice: "Email was sent successfully"
+    else
+      flash[:warning] = "Please fill out required fields"
+      redirect_to lead_path(lead, active_tab: "emails")
+    end
   end
 
 private

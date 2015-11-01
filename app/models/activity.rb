@@ -4,8 +4,8 @@ class Activity
     activities = ActiveRecord::Base.connection.execute("select * from #{APP_CONFIG[:alli_db]}.ahoy_events where user_id in (select id from #{APP_CONFIG[:alli_db]}.users where email = '#{lead.email}') and name IN ('Viewed listing', 'Searched', 'Searched Location', 'Advanced Search') order by time desc;")
   end
 
-  def self.get_listings_viewed lead, activity_type
-    activities = ActiveRecord::Base.connection.execute("select * from #{APP_CONFIG[:alli_db]}.ahoy_events where user_id in (select id from #{APP_CONFIG[:alli_db]}.users where email = '#{lead.email}') and name = '#{activity_type}' order by time desc;")
+  def self.get_listings_viewed lead
+    activities = ActiveRecord::Base.connection.execute("select * from #{APP_CONFIG[:alli_db]}.ahoy_events where user_id in (select id from #{APP_CONFIG[:alli_db]}.users where email = '#{lead.email}') and name = 'Viewed listing' order by time desc")
   end
 
   def self.most_active_leads

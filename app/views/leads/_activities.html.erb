@@ -12,7 +12,7 @@
                 <th width="40%">Title</th>
                 <th width="25%" style="text-align:center;">Time spent (seconds)</th>
               </tr>
-              <% activities.select{|a| a[3] == "Viewed listing"}.each do |activity| %>
+              <% activities.select{|a| a[3] == "Viewed listing"}.first(25).each do |activity| %>
                 <tr>
                   <td width="35%" style="border-top:1px solid black;"><%= activity[3] %></td>
                   <td width="40%" style="border-top:1px solid black;"><%= activity_parse(activity[4], "title") %></td>

@@ -129,7 +129,8 @@ module ApplicationHelper
       url + "#{url.include?('?') ? '&' : '?'}cancel=false" + related,
       :remote => true,
       :onclick => "this.href = this.href.replace(/cancel=(true|false)/,'cancel='+ ($('##{id}').css('display') != 'none'));",
-      :class => options[:class]
+      :class => options[:class],
+      :id => options[:id]
     )
   end
 

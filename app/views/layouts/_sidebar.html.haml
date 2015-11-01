@@ -4,7 +4,12 @@
 - sidebar = "admin/#{sidebar}" if controller.class.to_s.starts_with?("Admin::")
 
 = content_for :sidebar
-- begin
+  .panel.lists
+    .caption New Lead
+    %ul
+      %li
+        = link_to "Create a New Lead", leads_path(new: true)
+  - begin
   = render sidebar
   - rescue MissingTemplate
 

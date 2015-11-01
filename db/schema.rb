@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20151009232654) do
+ActiveRecord::Schema.define(:version => 20151101052106) do
 
   create_table "account_contacts", :force => true do |t|
     t.integer  "account_id"
@@ -359,6 +359,8 @@ ActiveRecord::Schema.define(:version => 20151009232654) do
     t.text     "requested_info"
     t.float    "lat"
     t.float    "long"
+    t.datetime "last_activity_at"
+    t.integer  "viewed_listings_count"
   end
 
   add_index "leads", ["assigned_to"], :name => "index_leads_on_assigned_to"

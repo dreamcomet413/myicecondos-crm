@@ -7,7 +7,31 @@
 = render 'search'
 
 .remote#options{ hidden }
-
+%div{style: "background:#e5e5e5;margin-top:10px;"}
+  .lead-info-box{style: "width:10%;font-weight:bold;"}
+    Last Activity
+    %br
+    Added to System
+  .lead-info-box{style: "width:10%;font-weight:bold;"}
+    Lead Name
+    %br
+    Location
+  .lead-info-box{style: "width:15%;font-weight:bold;"}
+    Phone
+    %br
+    Email
+  .lead-info-box{style: "width:10%;font-weight:bold;"}
+    Status
+    %br
+    Title
+  .lead-info-box{style: "width:20%;font-weight:bold;"}
+    &nbsp;
+    %br
+    Lead Stats
+  .lead-info-box{style: "width:10%;font-weight:bold;"}
+    &nbsp;
+    %br
+    Owner
 .list#leads
   - if @leads.any?
     = render @leads
@@ -16,3 +40,7 @@
 
 #paginate= render "shared/paginate_with_per_page"
 #export= render "shared/export"
+
+- if params[:new] == "true"
+  :javascript
+    $("#new_entity").click();

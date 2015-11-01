@@ -436,6 +436,16 @@
     $('a[data-to-show=' + to_show + ']').addClass('active')
     return
 
+  $(document).on 'click', '.email_link', ->
+    to_show = $(this).data('to-show')
+    # Hide all
+    $('#lead_details .lead_tab').hide()
+    $('#lead_details .tabs li a').removeClass('active')
+    # Show selected
+    $('#' + to_show).show()
+    $('a[data-to-show=' + to_show + ']').addClass('active')
+    return
+
   $(document).on 'click', "#new_call_link", (e) ->
     e.preventDefault()
     $("#new_call_container").show()
@@ -464,6 +474,10 @@
   $(document).on 'click', "#cancel_lead_email", (e) ->
     e.preventDefault()
     $("#send_lead_email").show()
-    $("#new_lead_email").hide()  
+    $("#new_lead_email").hide()
+
+  $(document).on 'click', "#show_custom_email", (e) ->
+    e.preventDefault()
+    $(".custom_email").show()
 
 ) jQuery

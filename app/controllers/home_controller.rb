@@ -13,6 +13,7 @@ class HomeController < ApplicationController
     @my_tasks = Task.visible_on_dashboard(current_user).includes(:user, :asset).by_due_at
     @my_opportunities = Opportunity.visible_on_dashboard(current_user).includes(:account, :user, :tags).by_closes_on.by_amount
     @my_accounts = Account.visible_on_dashboard(current_user).includes(:user, :tags).by_name
+    @my_leads = Lead.assigned_to(current_user)
     @new_users = Contact.where("created_at > ?", 24.hours.ago)
     @active_users = Activity.most_active_leads
     respond_with(@activities)

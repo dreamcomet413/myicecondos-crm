@@ -72,7 +72,7 @@ class Lead < ActiveRecord::Base
   has_paper_trail :ignore => [ :subscribed_users ]
   has_fields
   exportable
-  sortable :by => [ "first_name ASC", "last_name ASC", "company ASC", "rating DESC", "created_at DESC", "updated_at DESC" ], :default => "created_at DESC"
+  sortable :by => [ "first_name ASC", "last_name ASC", "company ASC", "rating DESC", "created_at DESC", "updated_at DESC", "last_activity_at DESC" ], :default => "created_at DESC"
 
   has_ransackable_associations %w(contact campaign tasks tags activities emails addresses comments)
   ransack_can_autocomplete
@@ -167,6 +167,15 @@ class Lead < ActiveRecord::Base
     end
   end
 
+  def self.rollup_last_activity
+    Lead.all.each do |l|
+      activities = Activity.get_activities(l)
+      listing_data = activities.select{|a| a[3] == "Viewed listing"}.collect{|l| [activity_parse(l[4], "class_name"), activity_parse(l[4], "id")]}
+      all_listings = Listing.get_listings(listing_data)
+      l.update_attributes(last_activity_at: activities.first.try(:[], 5), viewed_listings_count: all_listings.uniq.count)
+    end
+  end
+
   # Discard a task from the lead.
   #----------------------------------------------------------------------------
   def discard!(task)
@@ -239,6 +248,22 @@ private
       contact_attrs[name] = self.send(name.intern)
     end
     contact.update_attributes(contact_attrs)
+  end
+
+  def self.activity_parse(hash_str, prop)
+    begin
+      s = JSON.parse(hash_str)[prop]
+      if prop == "location"
+        a = []
+        a << s["province"] if s["province"].present?
+        a << s["city"] if s["city"].present?
+        a << s["street"] if s["street"].present?
+        s = a.join(", ")
+      end
+      return s
+    rescue Exception => e
+      ""
+    end
   end
 
   ActiveSupport.run_load_hooks(:fat_free_crm_lead, self)

@@ -1,9 +1,4 @@
-%li.highlight[lead]
-  - if lead.status
-    .strip{:class => lead.status}= t lead.status
-  - else
-    .strip{:style => "color: gray;"}= t :other
-
+%li.highlight[lead]{style: "position:relative;"}
   %ul.tools
     - if can?(:update, lead)
       %li= link_to_edit(lead)
@@ -26,37 +21,39 @@
     - if can?(:destroy, lead)
       %li= link_to_delete(lead)
 
-  .indent
-    = link_to_if can?(:read, lead), lead.full_name(current_user.preference[:leads_naming]), lead
-    %tt
-      - if lead.company? && lead.title?
-        = t(:works_at, :job_title => lead.title, :company => lead.company)
+  %div
+    .lead-info-box{style: "width:10%;"}
+      = lead.last_activity_at.try(:strftime, "%e %b %Y") || "--"
+      %br
+      = timeago(lead.created_at)
+    .lead-info-box{style: "width:10%;"}
+      %strong
+        = link_to lead.full_name || "--", lead
+      %br
+      = lead.listing_info_city || lead.buying_info_city || "--"
+    .lead-info-box{style: "width:15%;"}
+      = lead.phone || "--"
+      %br
+      = lead.email || "--"
+    .lead-info-box{style: "width:10%;"}
+      - if lead.status
+        .strip{:class => lead.status}= t lead.status
       - else
-        = lead.company if lead.company?
-        = lead.title if lead.title?
-      - if lead.referred_by?
-        &ndash;
-        == #{t :referred_by_small} #{lead.referred_by}
-
-    %dt
-      = stars_for(lead)
-      |
-      - if can?(:read, lead)
-        - if lead.email.present?
-          = link_to_email(lead.email)
-          |
-        - if lead.phone.present?
-          == #{t :phone_small}:
-          %b= lead.phone
-          |
-        - if lead.mobile.present?
-          == #{t :mobile_small}:
-          %b= lead.mobile
-          |
-      = t(:added_ago, value: timeago(lead.created_at)).html_safe
-
-    - if lead.tag_list.present?
-      %dt
-        .tags= tags_for_index(lead)
+        .strip{:style => "color: gray;"}= t :other
+      %br
+      = lead.title || "--"
+    .lead-info-box{style: "width:20%;"}
+      Tasks:
+      = lead.tasks.count
+      &nbsp;|&nbsp;
+      Sent Emails:
+      = lead.emails.count
+      %br
+      Listings Viewed:
+      = lead.viewed_listings_count
+    .lead-info-box{style: "width:10%;"}
+      &nbsp;
+      %br
+      = lead.assignee.try(:full_name) || "Not Assigned"
 
     = hook(:lead_bottom, self, :lead => lead)

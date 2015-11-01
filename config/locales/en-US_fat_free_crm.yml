@@ -232,6 +232,7 @@ en-US:
   option_closes_on: close date
   option_company: company
   option_created_at: date created
+  option_last_activity_at: last activity
   option_ends_on: end date
   option_first_name: first name
   option_last_name: last name

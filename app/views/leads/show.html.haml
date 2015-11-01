@@ -5,9 +5,38 @@
   -# default view
 
   = styles_for :task
-
   = render 'leads/title_bar', :lead => @lead
 
+  %div{style:"padding:20px 0;"}
+    %strong Lead Summary
+    %br
+    %br
+    %div{style:"width:40%;margin-right:5%;float:left;"}
+      Created On:&nbsp;&nbsp;&nbsp;
+      = @lead.created_at.to_s(:long)
+      %br
+      Source:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      = @lead.source || "--"
+      %br
+      Status:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      = @lead.status || "--"
+      %br
+      Phone:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      = @lead.phone || "--"
+      %br
+      Email:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      = link_to "#{@lead.email || "--"}", '#', :"data-to-show" => "tab_emails", class: "email_link"
+    %div{style:"width:40%;float:left;"}
+      Lead Type:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      = @lead.title || "--"
+      %br
+      Company:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      = @lead.company || "--"
+      %br
+      Last Active:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      = @lead.last_activity_at.try(:to_s, :long)
+      %br
+    .clearfix
   = render "comments/new", :commentable => @lead
 
   = hook(:show_lead_bottom, self, {entity: @lead}) do
