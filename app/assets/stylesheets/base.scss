@@ -108,3 +108,10 @@ tt {
   padding: 5px 10px;
   display: inline-block;
 }
+.homepage-leads {
+  list-style: none;
+  li {
+    list-style: none !important;
+    border-bottom: 1px silver dotted;
+  }
+}
