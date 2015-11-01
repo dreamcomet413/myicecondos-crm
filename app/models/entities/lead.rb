@@ -227,10 +227,13 @@ private
   end
 
   def attach_campaign
-    return unless source.present?
     return unless assigned_to.present?
     unless campaign_id.present?
-      update_attributes(campaign_id: Campaign.where(user_id: assigned_to).for_source(source).first.try(:id))
+      if source.present?
+        update_attributes(campaign_id: Campaign.where(user_id: assigned_to).for_source(source).first.try(:id))
+      else
+        update_attributes(campaign_id: Campaign.where(user_id: assigned_to).for_source("Other").first.try(:id))
+      end
     else
       campaign.schedule_lead_emails(self)
     end
