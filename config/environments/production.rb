@@ -61,6 +61,8 @@ if defined?(FatFreeCRM::Application)
 
     # Send deprecation notices to registered listeners
     config.active_support.deprecation = :notify
+    
+    config.action_mailer.default_url_options = { host: 'crm.nicholasalli.com' }
 
     config.paperclip_defaults = {
       :storage => :s3,
