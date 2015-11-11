@@ -61,13 +61,13 @@ if defined?(FatFreeCRM::Application)
 
     # Send deprecation notices to registered listeners
     config.active_support.deprecation = :notify
-    
-    config.action_mailer.default_url_options = { host: 'crm.nicholasalli.com' }
+
+    config.action_mailer.default_url_options = { host: 'crm.icecondos.com' }
 
     config.paperclip_defaults = {
       :storage => :s3,
       :s3_credentials => {
-        :bucket => 'nicholasalli'
+        :bucket => 'icecondos'
       }
     }
 
@@ -81,7 +81,7 @@ if defined?(FatFreeCRM::Application)
       :user_name => "webmaster@kitchenandbath.ca",
       :password  => "Cjsy9CNAhEspT8OnlAjexA", # SMTP password is any valid API key
       :authentication => 'login', # Mandrill supports 'plain' or 'login'
-      :domain => 'nicholasalli.com', # your domain to identify your server when connecting
+      :domain => 'icecondos.com', # your domain to identify your server when connecting
     }
   end
 end

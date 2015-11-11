@@ -15,7 +15,7 @@
         <tr>
           <td><%= landing.title %></td>
           <td>/<%= landing.slug %></td>
-          <td><%= link_to "View", "#{APP_CONFIG[:alli_url]}/landing/#{landing.slug}" %> | <%= link_to "Edit", edit_landing_path(landing) %> | <%= link_to "Delete", landing, method: :delete, confirm: "Are you sure?" %></td>
+          <td><%= link_to "View", "#{APP_CONFIG[:icecondos_url]}/landing/#{landing.slug}" %> | <%= link_to "Edit", edit_landing_path(landing) %> | <%= link_to "Delete", landing, method: :delete, confirm: "Are you sure?" %></td>
         </tr>
       <% end %>
     </tbody>

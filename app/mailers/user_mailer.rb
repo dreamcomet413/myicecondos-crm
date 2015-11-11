@@ -8,7 +8,7 @@ class UserMailer < ActionMailer::Base
   def password_reset_instructions(user)
     @edit_password_url = edit_password_url(user.perishable_token)
 
-    mail :subject => "Nicholas Alli CRM: " + I18n.t(:password_reset_instruction),
+    mail :subject => "Ice Condos CRM: " + I18n.t(:password_reset_instruction),
          :to => user.email,
          :from => from_address,
          :date => Time.now
@@ -16,7 +16,7 @@ class UserMailer < ActionMailer::Base
 
   def new_lead(user, lead)
     @lead = lead
-    mail :subject => "Nicholas Alli CRM: You have been assigned a new lead",
+    mail :subject => "Ice Condos CRM: You have been assigned a new lead",
          :to => user.email,
          :from => from_address
   end
@@ -26,7 +26,7 @@ class UserMailer < ActionMailer::Base
     @entity_name = entity.name
     @entity_type = entity.class.name
     @assigner_name = assigner.name
-    mail :subject => "Nicholas Alli CRM: You have been assigned #{@entity_name} #{@entity_type}",
+    mail :subject => "Ice Condos CRM: You have been assigned #{@entity_name} #{@entity_type}",
          :to => entity.assignee.email,
          :from => from_address
   end
@@ -34,7 +34,7 @@ class UserMailer < ActionMailer::Base
   def email_template_sample(user, lead, email_template)
     @email_content = parse_liquid(email_template.body, lead, user)
     attachments.inline['header_image.png'] = Paperclip.io_adapters.for(email_template.header_image).read if email_template.header_image.present?
-    mail(subject: "Nicholas Alli CRM Sample: #{email_template.subject}", to: user.email, from: from_address) do |format|
+    mail(subject: "Ice Condos CRM Sample: #{email_template.subject}", to: user.email, from: from_address) do |format|
       format.html { render "email_body" }
     end
   end
@@ -42,9 +42,9 @@ class UserMailer < ActionMailer::Base
   def campaign_email(lead, email_template)
     return unless lead.email.present?
     @email_content = parse_liquid(email_template.body, lead, lead.assignee)
-    e = Email.create(mediator: lead, sent_from: from_address, sent_to: lead.email, subject: "Nicholas Alli: #{email_template.subject}", body: @email_content, sent_at: DateTime.now, imap_message_id: DateTime.now.to_i)
+    e = Email.create(mediator: lead, sent_from: from_address, sent_to: lead.email, subject: "Ice Condos: #{email_template.subject}", body: @email_content, sent_at: DateTime.now, imap_message_id: DateTime.now.to_i)
     attachments.inline['header_image.png'] = Paperclip.io_adapters.for(email_template.header_image).read if email_template.header_image.present?
-    mail(subject: "Nicholas Alli: #{email_template.subject}", to: lead.email, from: from_address) do |format|
+    mail(subject: "Ice Condos: #{email_template.subject}", to: lead.email, from: from_address) do |format|
       format.html { render "email_body" }
     end
     headers["X-MC-Track"] = "opens"
@@ -54,9 +54,9 @@ class UserMailer < ActionMailer::Base
   def manual_email(lead, email_template, user)
     return unless lead.email.present?
     @email_content = parse_liquid(email_template.body, lead, user)
-    e = Email.create(mediator: lead, sent_from: from_address, sent_to: lead.email, subject: "Nicholas Alli: #{email_template.subject}", body: @email_content, sent_at: DateTime.now, imap_message_id: DateTime.now.to_i)
+    e = Email.create(mediator: lead, sent_from: from_address, sent_to: lead.email, subject: "Ice Condos: #{email_template.subject}", body: @email_content, sent_at: DateTime.now, imap_message_id: DateTime.now.to_i)
     attachments.inline['header_image.png'] = Paperclip.io_adapters.for(email_template.header_image).read if email_template.header_image.present?
-    mail(subject: "Nicholas Alli: #{email_template.subject}", to: lead.email, from: user.email) do |format|
+    mail(subject: "Ice Condos: #{email_template.subject}", to: lead.email, from: user.email) do |format|
       format.html { render "email_body" }
     end
     headers["X-MC-Track"] = "opens"
@@ -67,7 +67,7 @@ class UserMailer < ActionMailer::Base
 
   def from_address
     from = (Setting.smtp || {})[:from]
-    !from.blank? ? from : "Nicholas Alli <noreply@nicholasalli.com>"
+    !from.blank? ? from : "Ice Condos <noreply@icecondos.com>"
   end
 
   def parse_liquid(body, lead, user=nil)

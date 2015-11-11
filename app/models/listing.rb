@@ -2,7 +2,7 @@ class Listing < ActiveRecord::Base
   self.abstract_class = true
   self.table_name = "listings"
 
-  establish_connection(APP_CONFIG[:alli_db_connection])
+  establish_connection(APP_CONFIG[:icecondos_db_connection])
 
   def self.get_listings data
     objects = []

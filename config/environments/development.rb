@@ -29,7 +29,7 @@ if defined?(FatFreeCRM::Application)
       :authentication => :cram_md5
     }
 
-    config.action_mailer.default_url_options = { host: 'alli-crm.dev' }
+    config.action_mailer.default_url_options = { host: 'icecondos-crm.dev' }
 
     # Don't care if the mailer can't send
     config.action_mailer.raise_delivery_errors = true
@@ -56,7 +56,7 @@ if defined?(FatFreeCRM::Application)
     config.paperclip_defaults = {
       :storage => :s3,
       :s3_credentials => {
-        :bucket => 'nicholasalli-dev'
+        :bucket => 'icecondos-dev'
       }
     }
 

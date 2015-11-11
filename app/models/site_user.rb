@@ -2,7 +2,7 @@ class SiteUser < ActiveRecord::Base
   self.abstract_class = true
   self.table_name = "users"
 
-  establish_connection(APP_CONFIG[:alli_db_connection])
+  establish_connection(APP_CONFIG[:icecondos_db_connection])
 
   def favourites
     Favourite.where(user_id: id)

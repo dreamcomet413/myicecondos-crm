@@ -89,7 +89,7 @@ class Lead < ActiveRecord::Base
   before_save   :process_campaign
   after_save :sync_with_contact
 
-  @@alli_connection = Faraday.new do |faraday|
+  @@icecondos_connection = Faraday.new do |faraday|
     faraday.adapter Faraday.default_adapter
     faraday.request :url_encoded
   end
@@ -142,8 +142,8 @@ class Lead < ActiveRecord::Base
     contact     = Contact.create_for(self, account, opportunity, params)
 
     pass = params[:custom_password] || "password"
-    @@alli_connection.post do |req|
-      req.url "#{APP_CONFIG[:alli_url]}/users/user_from_crm", new_user: { email: self.email, first_name: self.first_name, last_name: self.last_name, phone_number: self.phone, password: pass, password_confirmation: pass}, token: APP_CONFIG[:crm_call_token]
+    @@icecondos_connection.post do |req|
+      req.url "#{APP_CONFIG[:icecondos_url]}/users/user_from_crm", new_user: { email: self.email, first_name: self.first_name, last_name: self.last_name, phone_number: self.phone, password: pass, password_confirmation: pass}, token: APP_CONFIG[:crm_call_token]
     end
 
     [account, opportunity, contact]

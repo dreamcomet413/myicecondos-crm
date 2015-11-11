@@ -6,7 +6,7 @@
 class ContactsController < EntitiesController
   before_filter :get_accounts, :only => [ :new, :create, :edit, :update ]
 
-  @@alli_connection = Faraday.new do |faraday|
+  @@icecondos_connection = Faraday.new do |faraday|
     faraday.adapter Faraday.default_adapter
     faraday.request :url_encoded
   end
@@ -96,8 +96,8 @@ class ContactsController < EntitiesController
         end
       else
         if params[:custom_password].present?
-          @@alli_connection.post do |req|
-            req.url "#{APP_CONFIG[:alli_url]}/users/change_password", email: @contact.email, new_password: params[:custom_password], token: APP_CONFIG[:crm_call_token]
+          @@icecondos_connection.post do |req|
+            req.url "#{APP_CONFIG[:icecondos_url]}/users/change_password", email: @contact.email, new_password: params[:custom_password], token: APP_CONFIG[:crm_call_token]
           end
         end
       end

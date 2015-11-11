@@ -13,8 +13,8 @@ class ProspectMatchesController < ApplicationController
     @prospect_match.property_types = params[:property_types].join(",")
     @prospect_match.city = params[:locality]
     @lead = Lead.find params[:lead_id]
-    @alli_user = SiteUser.where(email: @lead.email).first
-    @prospect_match.user_id = @alli_user.id
+    @website_user = SiteUser.where(email: @lead.email).first
+    @prospect_match.user_id = @website_user.id
     if @prospect_match.save
       redirect_to @lead, notice: "You have successfully subscribed the user for regular updates."
     else

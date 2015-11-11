@@ -25,9 +25,9 @@ class LeadsController < EntitiesController
     @comment = Comment.new
     @timeline = timeline(@lead)
     @activities = Activity.get_activities(@lead)
-    @alli_user = SiteUser.where(email: @lead.email).first
-    @favourites = @alli_user.favourites if @alli_user
-    @prospect_matches = @alli_user.prospect_matches if @alli_user
+    @website_user = SiteUser.where(email: @lead.email).first
+    @favourites = @website_user.favourites if @website_user
+    @prospect_matches = @website_user.prospect_matches if @website_user
 
     respond_with(@lead)
   end

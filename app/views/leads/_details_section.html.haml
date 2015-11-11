@@ -71,7 +71,7 @@
             Properties Viewed
           - all_listings.group_by(&:ml_num).each do |k, v|
             .listing-box
-              = link_to image_tag("http://nicholasalli.s3.amazonaws.com/listing_photos/#{v.first.try(:class).try(:name).try(:parameterize)}_#{v.first.try(:id)}_0.jpg", onerror: "this.onerror=null;this.src='#{APP_CONFIG[:alli_url]}/missing-image.png';"), "#{APP_CONFIG[:alli_url]}/listings/#{v.first.try(:id)}", target: "_blank"
+              = link_to image_tag(ListingImage.get_image_for_listing(v.first.try(:id)), onerror: "this.onerror=null;this.src='#{APP_CONFIG[:icecondos_url]}/missing-image.png';"), "#{APP_CONFIG[:icecondos_url]}/listings/#{v.first.try(:id)}", target: "_blank"
               %br
               %span
                 = v.count
@@ -534,7 +534,7 @@
           - listing = Listing.where(id: favourite.favouriteable_id).first
           - if listing
             .listing-box
-              = link_to image_tag("http://nicholasalli.s3.amazonaws.com/listing_photos/listing_#{listing.id}_0.jpg", onerror: "this.onerror=null;this.src='#{APP_CONFIG[:alli_url]}/missing-image.png';"), "#{APP_CONFIG[:alli_url]}/listings/#{listing.id}", target: "_blank"
+              = link_to image_tag(ListingImage.get_image_for_listing(listing.id), onerror: "this.onerror=null;this.src='#{APP_CONFIG[:icecondos_url]}/missing-image.png';"), "#{APP_CONFIG[:icecondos_url]}/listings/#{listing.id}", target: "_blank"
               %br
               %span
                 = "#{listing.addr}, #{listing.municipality}"
