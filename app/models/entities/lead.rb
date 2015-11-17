@@ -83,6 +83,7 @@ class Lead < ActiveRecord::Base
 
   after_create  :increment_leads_count
   after_create  :assign_lead
+  after_create  :notify_admins
   after_create  :attach_campaign
   after_destroy :decrement_leads_count
 
@@ -218,6 +219,10 @@ private
     User.find(aid).notify_about_lead(self)
   rescue => e
     Rails.logger.error e.message
+  end
+
+  def notify_admins
+    User.notify_admins_about_lead(self)
   end
 
   # Make sure at least one user has been selected if the lead is being shared.

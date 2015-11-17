@@ -152,6 +152,10 @@ class User < ActiveRecord::Base
     UserMailer.new_lead(self, lead).deliver
   end
 
+  def self.notify_admins_about_lead lead
+    UserMailer.new_lead_created(User.where(admin: true), lead).deliver
+  end
+
   private
 
   # Suspend newly created user if signup requires an approval.

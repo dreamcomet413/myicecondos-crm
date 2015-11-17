@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Ice Condos Contact Form</title>
+  <style type="text/css">
+  body { color:#000000; font-size:14px; font-family:Verdana,Helvetica,Arial; width: 100%; }
+  .content {
+    padding:20px;
+    margin:20px;
+    border: 1px solid #ccc;
+  }
+  .email_header_image { max-width:99%; margin: 5px 0; }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <h3>Request for addintional information</h3>
+    <p>
+      <strong>Name:</strong>&nbsp;&nbsp;<%= @lead_params[:first_name] %><%= @lead_params[:last_name] %><br/>
+      <strong>Email:</strong>&nbsp;&nbsp;<%= @lead_params[:email] %><br/>
+      <strong>Phone:</strong>&nbsp;&nbsp;<%= @lead_params[:phone] %><br/>
+      <strong>Message:</strong>&nbsp;&nbsp;<%= @lead_params[:requested_info] %>
+    </p>
+  </div>
+</body>
+</html>

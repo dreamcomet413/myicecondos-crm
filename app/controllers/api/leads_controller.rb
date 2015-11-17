@@ -17,6 +17,9 @@ class Api::LeadsController < Api::BaseController
     else
       Lead.create params[:lead]
     end
+    if params[:lead][:requested_info].present?
+      UserMailer.contact_form(params[:lead]).deliver
+    end
     render nothing: true
   end
 

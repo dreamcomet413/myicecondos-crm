@@ -21,6 +21,21 @@ class UserMailer < ActionMailer::Base
          :from => from_address
   end
 
+  def new_lead_created(admins, lead)
+    @lead = lead
+    mail :subject => "Nicholas Alli CRM: A new lead has been created",
+         :to => admins.collect(&:email),
+         :from => from_address
+  end
+
+  def contact_form(lead_params)
+    @lead_params = lead_params
+    mail :subject => "Nicholas Alli Contact Form: #{lead_params[:email]}",
+         :to => User.where(admin: true).collect(&:email),
+         :reply_to => lead_params[:email],
+         :from => from_address
+  end
+
   def assigned_entity_notification(entity, assigner)
     @entity_url = url_for(entity)
     @entity_name = entity.name
