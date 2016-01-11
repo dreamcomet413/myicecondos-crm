@@ -21,7 +21,7 @@ staging:
     pool: 5
     username: rails
     password: rails
-  icecondos_url: http://45.58.37.92
+  icecondos_url: http://myicecondos.com
   api_token: ZuB2nB24GTyWsyuPVRwMaZmi
   crm_call_token: MiB2nB24GTyWsyuPVRwMaZOk
 
