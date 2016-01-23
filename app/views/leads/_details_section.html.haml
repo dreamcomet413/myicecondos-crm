@@ -3,7 +3,9 @@
   .tabs
     %ul
       %li
-        = link_to "Analysis", '#', :"data-to-show" => "tab_analysis", class: params[:active_tab].present? ? "" : "active"
+        = link_to "Inquiries", '#', :"data-to-show" => "tab_inquiries", class: params[:active_tab].present? ? "" : "active"
+      %li
+        = link_to "Analysis", '#', :"data-to-show" => "tab_analysis"
       %li
         = link_to "Details", '#', :"data-to-show" => "tab_details"
       %li
@@ -21,7 +23,25 @@
       %li
         = link_to "Location", '#', :"data-to-show" => "tab_location"
 
-  .lead_tab#tab_analysis{ :style => params[:active_tab].present? ? 'display: none;' : '' }
+  .lead_tab#tab_inquiries{ :style => params[:active_tab].present? ? 'display: none;' : '' }
+    .info-section
+      %h2 Inquiries
+      - if lead.requested_info.present?
+        - lead.requested_info.split('------|------').each do |info|
+          - info_sections = info.split('|:|')
+          - if info_sections.count > 1
+            %strong
+              = info_sections[0]
+            %br
+            = info_sections[1]
+          - else
+            %p
+              = info_sections[0]
+          %hr
+          %br
+      - else
+        %p Lead has not requested any information yet
+  .lead_tab#tab_analysis{ :style => 'display: none;' }
     %p
       - listing_data = activities.select{|a| a[3] == "Viewed listing"}.collect{|l| [activity_parse(l[4], "class_name"), activity_parse(l[4], "id")]}
       - all_listings = Listing.get_listings(listing_data)
