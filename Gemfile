@@ -7,7 +7,7 @@ source 'https://rubygems.org'
 
 gem 'pg'
 gem 'activerecord-postgresql-adapter'
-
+gem 'activerecord-mysql2-adapter' # ??
 
 # Removes a gem dependency
 def remove(name)

@@ -22,6 +22,8 @@ GEM
       activesupport (= 3.2.21)
       arel (~> 3.0.2)
       tzinfo (~> 0.3.29)
+    activerecord-mysql2-adapter (0.0.3)
+      mysql2
     activerecord-postgresql-adapter (0.0.1)
       pg
     activeresource (3.2.21)
@@ -187,6 +189,7 @@ GEM
     mini_portile (0.6.1)
     multi_json (1.10.1)
     multipart-post (2.0.0)
+    mysql2 (0.4.4)
     nenv (0.1.1)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
@@ -368,6 +371,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activerecord-mysql2-adapter
   activerecord-postgresql-adapter
   acts-as-taggable-on (~> 2.3.3)
   acts_as_commentable (~> 3.0.1)
