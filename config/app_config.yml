@@ -26,14 +26,14 @@ staging:
   crm_call_token: MiB2nB24GTyWsyuPVRwMaZOk
 
 production:
-  icecondos_db: icecondos_production
-  icecondos_db_connection:
-    adapter: mysql2
-    encoding: utf8
-    database: icecondos_production
-    pool: 5
-    username: rails
-    password: rails_icecondos
+  icecondos_db: myicecondos-crm
+  # icecondos_db_connection:
+  #   adapter: mysql2
+  #   encoding: utf8
+  #   database: icecondos_production
+  #   pool: 5
+  #   username: rails
+  #   password: rails_icecondos
   icecondos_url: http://icecondos.com
   api_token: ZuB2nB24GTyWsyuPVRwMaZmi
   crm_call_token: MiB2nB24GTyWsyuPVRwMaZOk
