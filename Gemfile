@@ -8,6 +8,7 @@ source 'https://rubygems.org'
 gem 'pg'
 gem 'activerecord-postgresql-adapter'
 
+
 # Removes a gem dependency
 def remove(name)
   @dependencies.reject! {|d| d.name == name }
