@@ -6,6 +6,7 @@ source 'https://rubygems.org'
 # gem 'sqlite3'
 
 gem 'pg'
+gem 'activerecord-postgresql-adapter'
 
 # Removes a gem dependency
 def remove(name)
