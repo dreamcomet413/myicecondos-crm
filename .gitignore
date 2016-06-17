@@ -19,7 +19,7 @@ log/*.log
 doc/
 vendor/bundle
 Gemfile.ci.lock
-
+config/database.yml
 public/avatars/**/*
 public/assets
 
