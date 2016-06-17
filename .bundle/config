@@ -1,0 +1,4 @@
+---
+BUNDLE_FROZEN: '1'
+BUNDLE_BIN: bin
+BUNDLE_WITHOUT: development:test
